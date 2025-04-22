@@ -201,6 +201,58 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  document.querySelectorAll('.mood-button').forEach(button => {
+    button.addEventListener('click', () => {
+      const mood = button.getAttribute('data-mood');
+      const moodMessage = {
+        happy: "You're feeling happy today! 😊",
+        neutral: "You're feeling neutral today. 😐",
+        stressed: "You're feeling stressed today. 😣"
+      };
+      document.getElementById('selected-mood-message').textContent = moodMessage[mood];
+
+      localStorage.setItem('selectedMood', mood);
+    });
+  });
+
+
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedMood = localStorage.getItem('selectedMood');
+    const moodMessageElement = document.getElementById('selected-mood-message');
+    const moodMessage = {
+      happy: "You're feeling happy today! 😊",
+      neutral: "You're feeling neutral today. 😐",
+      stressed: "You're feeling stressed today. 😣"
+    };
+
+    if (savedMood && moodMessage[savedMood]) {
+      moodMessageElement.textContent = moodMessage[savedMood];
+    } else {
+      moodMessageElement.textContent = "";
+    }
+  });
+
+
+  const quotes = [
+    "You are capable of amazing things.",
+    "Progress, not perfection.",
+    "Take it one step at a time.",
+    "You’ve got this.",
+    "Be kind to yourself today.",
+    "Small steps make big changes.",
+    "Believe in the person you’re becoming."
+  ];
+
+  function displayRandomQuote() {
+    const quoteText = document.getElementById('quote-text');
+    const randomIndex = Math.floor(Math.random() * quotes.length);
+    quoteText.textContent = quotes[randomIndex];
+  }
+
+  window.addEventListener('DOMContentLoaded', displayRandomQuote);
+
+
+
   // Function to change background with slide effect
   async function changeBackgroundWithSlide(newImageUrl) {
     try {
@@ -381,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isFinalImage) {
         changeBackgroundWithSlide(
           backgroundSets[selectedCategory][
-            backgroundSets[selectedCategory].length - 1
+          backgroundSets[selectedCategory].length - 1
           ]
         ).then(() => {
           tasksContainer.classList.add("hidden");
@@ -628,9 +680,18 @@ document.addEventListener("DOMContentLoaded", () => {
       <p class="task-subtitle">some tasks to help you feel good</p>
     `;
 
+    const tasksHeaderTwo =
+      document.getElementById("tasks-header") || document.createElement("div");
+    tasksHeader.id = "tasks-header";
+    tasksHeader.innerHTML = `
+      <h1 class="task-title">today's list</h1>
+      <p class="task-subtitle">some tasks to help you feel good</p>
+    `;
+
     if (!document.getElementById("tasks-header")) {
       tasksContainer.innerHTML = "";
       tasksContainer.appendChild(tasksHeader);
+      tasksContainer.appendChild(tasksHeaderTwo);
 
       const newTaskList = document.createElement("ul");
       newTaskList.id = "task-list";
@@ -647,13 +708,11 @@ document.addEventListener("DOMContentLoaded", () => {
       taskItem.classList.add("draggable");
       taskItem.innerHTML = `
         <input type="checkbox" ${task.completed ? "checked" : ""} />
-        <div class="task-text" contenteditable="true" placeholder="New task">${
-          task.text
+        <div class="task-text" contenteditable="true" placeholder="New task">${task.text
         }</div>
-        ${
-          task.text && !task.completed
-            ? `<button class="delete-task"></button>`
-            : ""
+        ${task.text && !task.completed
+          ? `<button class="delete-task"></button>`
+          : ""
         }
         <div class="drag-handle">
          <div class="line"></div>
